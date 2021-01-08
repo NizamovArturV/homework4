@@ -1,7 +1,7 @@
 <?php
 
 // Преобразование массива
-function FilesArr(&$filesArr)
+function filesArr($filesArr)
 {
     foreach ($filesArr as $key => $file) {
         foreach ($file as $k => $v) {
@@ -13,36 +13,36 @@ function FilesArr(&$filesArr)
 }
 
 // Количество файлов
-function CountFiles($filesArr)
+function countFiles($filesArr)
 {
-    return (count($filesArr) > 5) ? false : true;
+    return $filesArr < 6;
 }
 
 // Проверка ошибок 
-function CheckErrors($fileError)
+function checkErrors($fileError)
 {
-    return ($fileError != 0) ? false : true;
+    return ($fileError === 0);
 }
 
 //Проверка типа файла 
-function CheckType($fileType, $fileTypesAccept = ['image/jpeg', 'image/png', 'image/jpg'])
+function checkType($fileType, $fileTypesAccept = ['image/jpeg', 'image/png', 'image/jpg'])
 {
-    return (!in_array($fileType,$fileTypesAccept)) ? false : true;
+    return (in_array($fileType,$fileTypesAccept));
 }
 
 //Проверка размера файла 
-function CheckSize($fileSize, $maxFileSize = 5000000)
+function checkSize($fileSize, $maxFileSize = 5000000)
 {
-    return ($fileSize > $maxFileSize) ? false : true;
+    return ($fileSize < $maxFileSize);
 }
 
 
 if (isset($_FILES['userfile']) && isset($_POST['upload'])) {
-    $files = FilesArr($_FILES['userfile']);
+    $files = filesArr($_FILES['userfile']);
     $uploadPath = $_SERVER['DOCUMENT_ROOT'] . '/upload/';
     $fileTypesAccept = ['image/jpeg', 'image/png', 'image/jpg'];
     
-    if (CountFiles($files) === false) {
+    if (countFiles(count($files)) === false) {
         $results[] = ("Нельзя загружать более 5 файлов");
     } else {
         foreach ($files as $k => $v) {
@@ -52,15 +52,15 @@ if (isset($_FILES['userfile']) && isset($_POST['upload'])) {
             $fileSize = $files[$k]['size'];
             $errorCode = $files[$k]['error'];
 
-            if (CheckErrors($errorCode) === false) {
+            if (checkErrors($errorCode) === false) {
                 $results[] = "Ошибка при загрузке файлов";
             }
 
-            if (CheckType($fileType) === false) {
+            if (checkType($fileType) === false) {
                 $results[] = "У файла $fileName недопустимый тип";
             }
 
-            if (CheckSize($fileSize) === false) {
+            if (checkSize($fileSize) === false) {
                 $results[] = "Размер изображения $fileName превышает 5 Мбайт";
             }
             if (empty($results)) {
